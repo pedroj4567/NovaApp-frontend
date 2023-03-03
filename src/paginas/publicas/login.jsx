@@ -1,16 +1,42 @@
+import axios from "axios"
+
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { Alerta } from "../../components/Alerta"
 const login = () => {
-  const [email,setEmail] = useState('')
+  const [correo,setCorreo] = useState('')
   const [password,setPassword] = useState('')
-  //validaciones inpur
-  const validationInputs = (e) =>{
-    const emailInput = document.querySelector('#email');
-    const passwordInput = document.querySelector('#password');
-    const fakeBtn = document.querySelector('#btn')
+  const [alerta,setAlerta] = useState({});
 
+  const handlerSubmit = async e =>{
+    e.preventDefault();
+    if([correo,password].includes('')){
+      return setAlerta({msg:"Todos los campos son obligatorios", error : true});
+    }
+    //sino hay error regresamos el state a su valor original
+    setAlerta({});
+
+     //Consultamos el usuario a la api
+
+    try {
+      const url = "http://localhost:4000/api/auth/iniciarSesion";
+      
+      const respuesta = await axios.post(url,{correo,password});
+      console.log(respuesta)
+    } catch (error) {
+      setAlerta({
+        msg:error.response.data.msg,
+        error: true
+      });
+      
+    }
   }
-    validationInputs();
+
+  //Confirmamos si existe un mensaje
+  const {msg} = alerta;
+
+ 
+
   return (
     <>
         {/* Seccion de contenido */}
@@ -32,23 +58,43 @@ const login = () => {
                     <h2 className="text-4xl font-semibold">Login </h2>
                 </div>
                 
-                    <form className="flex flex-col h-3/4 w-3/4  items-center mx-auto ">
+                    <form className="flex flex-col h-3/4 w-3/4  items-center mx-auto "
+                      onSubmit={handlerSubmit}
+                    >
                      
                         <label className="my-5 text-indigo-700 text-lg font-semibold w-2/3">Ingrese su usuario o email</label>
-                        <input type="email" className="w-80 h-10 border border-gray-200 rounded-xl pl-2 " id="email"/>
+                        <input type="email" className="w-80 h-10 border border-gray-200 rounded-xl pl-2"
+                         id="email"
+                         value={correo}
+                         onChange = {e => setCorreo(e.target.value)}
+
+                        />
                         <label className="text-left w-2/3 my-5 text-indigo-700 text-lg font-semibold ">Contraseña</label>
-                        <input type="password" className="w-80 h-10 border border-gray-200 rounded-xl pl-2 " id="password"/>
+                        <input type="password" className="w-80 h-10 border border-gray-200 rounded-xl pl-2 "
+                         id="password"
+                          value={password}
+                          onChange = {e => setPassword(e.target.value)}
+                         />
                   
                       <div className="flex justify-center w-80 mt-5">
-                        <Link to="/admin" className="bg-green-300 w-80 h-10 rounded-xl hover:bg-green-400 hover:text-white text-center transition-all font-semibold flex justify-center items-center" id="btn">Ingresar</Link> 
+                        <button
+                        type="submit"
+                        id='btn'
+                        className="bg-indigo-600 w-2/3 text-white capitalize p-2 rounded-xl font-bold hover:bg-indigo-700 transition-all"
+                        >Ingresar</button>
                       </div>
                       
                     <div className="w-2/3 mt-2 text-slate-500 cursor-pointer text-left">
                       <div><Link to='/ForgetPassword' className="hover:text-slate-700 transition-colors">¿Olvido su contraseña?</Link></div>
                     </div>
+                    {msg && <Alerta
+                      alerta={alerta}
+                    />}
                     </form>
               </div>
+             
         </div>
+       
     </>
   )
 }

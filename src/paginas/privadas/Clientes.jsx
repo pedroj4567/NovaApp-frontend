@@ -1,12 +1,7 @@
 import {HiOutlineSearch } from "react-icons/hi";
-import ClienteModal from "../../components/ClienteModal";
+import { Link } from "react-router-dom";
+
 function Clientes() {
-
-
-
-
-
-
 
   return (
     <>
@@ -22,7 +17,7 @@ function Clientes() {
 
                     </div>
                     <div className="w-1/2 relative">
-                      <button className="absolute right-5 p-2 rounded-2xl bg-indigo-600 text-white font-semibold">Agregar un nuevo cliente</button>
+                          
                     </div>
               </div>
               <div className="flex justify-evenly mt-4">
